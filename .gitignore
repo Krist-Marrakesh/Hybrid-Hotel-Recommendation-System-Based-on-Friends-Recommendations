@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Данные и Артефакты (НИКОГДА не пушим в Git)
+*.csv
+*.pth
+*.gz
+*.npy
+artifacts/
+data/
+
+# Docker
+postgres_data/
+
+# Секреты
+.env
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
