@@ -35,6 +35,7 @@ Stage 3: Final Combination Layer
 Concatenation: The output vector from the Cross Network (containing explicit feature interactions) and the output vector from the Deep Network (containing implicit abstract patterns) are concatenated into a final, comprehensive vector.
 Prediction: This final vector is fed into a single output neuron (Final Linear Layer) with a linear activation function.
 Output: The model outputs a single floating-point number (a raw score or logit).
+
 4. Model Output Interpretation
 The single number produced by the model is not a probability or a rating. Its absolute value is meaningless on its own.
 Its sole purpose is for ranking. A higher score for a user-item pair (U, A) than for (U, B) simply means that the model predicts user U is more likely to interact positively with hotel A than with hotel B. This allows us to sort the candidate list in a personalized and highly relevant order.
