@@ -40,16 +40,50 @@ To understand how this formula creates interactions, let's break it down step by
 Thanks to this elegant formula, Cross Network explicitly constructs (l+1)-order interactions at each layer l, doing so with O(d) parameters, compared to O(d²) for standard approaches. This makes it an extremely efficient "memorization engine" that is guaranteed to find and exploit the predictive power of explicit feature combinations in the data.
 
 
-1.2 The Generalization Component: Deep Residual Network
+### **1.2. Generalization Component: Deep Residual Network**
 
-The Deep Network component is tasked with capturing implicit, high-order, abstract feature patterns that are beyond the scope of explicit interaction learning. It learns the latent, continuous representations of features, enabling generalization to unseen combinations.
-While a standard DNN could be used, we enhance this sub-network with Residual Blocks (ResBlocks), inspired by the seminal ResNet architecture. A standard deep network is prone to the vanishing gradient problem, which impedes the stable training of very deep architectures. Residual connections solve this by providing "shortcut" paths for the gradient to flow.
-Each ResBlock is defined by:
-x<sub>l+1</sub> = F(x<sub>l</sub>) + x<sub>l</sub>
+#### **Architectural Principle**
+
+While the Cross Network is an expert at **remembering** explicit and predictable interactions, the Deep Network is designed as a **generalization** "engine." Its task is to discover **hidden, implicit, and high-level patterns** that cannot be expressed through simple feature combinations. It models abstract concepts that allow the system to recommend new, previously unseen, but relevant hotels to the user.
+
+Standard deep neural networks (DNNs) face the fundamental problem of **vanishing gradient** as their depth increases, making training very deep and therefore powerful models unstable and inefficient.  To overcome this limitation, we don't use a simple sequence of layers, but instead build our Deep subnetwork on Residual Blocks, a key innovation introduced in the ResNet architecture.
+
+#### **Architectural Unit: The Residual Block**
+
+Instead of forcing a sequence of layers to learn the desired final transformation H(x), we force them to learn a residual function F(x) := H(x) - x. The final transformation is then reconstructed as H(x) = F(x) + x. This seemingly simple trick dramatically changes the learning dynamics.
+
+ Each residual block `l` in our network performs the following transformation:
+
+$$
+x_{l+1} = \text{ReLU}(F(x_l, \{W_i\}) + x_l)
+$$
+
 Where:
-F(x<sub>l</sub>): Represents the transformations within the block (e.g., a sequence of Linear -> BatchNorm -> ReLU -> Dropout -> Linear -> BatchNorm).
-+ x<sub>l</sub>: Is the identity shortcut connection, which adds the input of the block to its output.
-By stacking these ResBlocks, we can build a very deep and powerful network that can learn highly complex and abstract feature representations without sacrificing training stability. This is our primary engine for generalization.
+* \( x_l \) and \( x_{l+1} \): Are the input and output vectors for the \(l\)th residual block.
+* \( F(x_l, \{W_i\}) \): This is the **residual function** learned by the layers within the block. In our implementation, it is represented by the following sequence of operations:
+
+1. `Linear_1 -> BatchNorm1d -> ReLU -> Dropout`
+2. `Linear_2 -> BatchNorm1d`
+* \( + x_l \): This is the **identity shortcut connection**. The input of block `x_l` is directly, without modification, added to the output of transformation `F`. 
+
+#### **Block Architecture Decomposition: Data Flow**
+
+1. **Main Path (Transformation Path):** The input vector `x_l` passes through the block's main computational path, which learns to find the "delta" or "residual" `F(x_l)`. `BatchNorm` is used after each linear layer to stabilize training and accelerate convergence. `ReLU` introduces nonlinearity, and `Dropout` provides regularization, preventing overfitting.
+
+2. **Shortcut Path:** Parallel to the main path, the input `x_l` passes through the "shortcut" path without any modifications.
+
+3. **Addition and Activation:** At the block's output, the results from both paths are summed. This allows gradients from backpropagation to flow unimpeded through the shortcut path, solving the attenuation problem. The final `ReLU` is applied to the sum. 
+
+#### **Full Architecture of the Deep Subnetwork**
+
+1. **Initial Projection:** Since the dimensionality of the input vector `x_0` (`input_dim`) may not match the desired dimensionality of the hidden layers (`hidden_dim`), `x_0` is first passed through a single standard linear layer (`nn.Linear`), which projects it into the desired space.
+
+2. **Sequence of Residual Blocks:** The output of the initial layer is sequentially passed through a stack of several (two in our model) residual blocks. The output of the first block is the input to the second.
+
+3. **Final Output:** The output vector from the last residual block, `deep_out`, is the output of the entire Deep subnetwork. This vector contains the high-level, abstract features learned by the model.
+
+Using residual blocks allows us to build a deep and, therefore, highly expressive neural network capable of effective generalization. It doesn't compete with the Cross Network, but rather **complements** it. The Deep subnetwork takes on the task of extracting implicit, complex patterns, while the Cross Network specializes in explicit, combinatorial rules. This synergy is the key to the high accuracy of the final hybrid DCN-R model.
+
 
 2. Complete Network Topology & Data Flow. 
 
