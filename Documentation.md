@@ -6,7 +6,9 @@ The core innovation of the DCN-R architecture is the parallel deployment of two 
 1.1 The Memorization Component: Cross Network
 The Cross Network is explicitly designed to learn bounded-degree, explicit feature interactions in a highly efficient manner. Standard DNNs struggle with this task, often requiring an excessive number of parameters to learn even simple second-order interactions (e.g., AND(city='Sochi', stars=5)). The Cross Network avoids this combinatorial explosion.
 The architecture consists of a stack of CrossLayers, each defined by the following formula:
+
 x<sub>l+1</sub> = x<sub>0</sub> ⊙ (x<sub>l</sub><sup>T</sup>w<sub>l</sub>) + b<sub>l</sub> + x<sub>l</sub>
+
 Where:
 x<sub>l</sub>, x<sub>l+1</sub> ∈ ℝ<sup>d</sup>: Are the output vectors from the l-th and (l+1)-th cross layers, respectively.
 x<sub>0</sub> ∈ ℝ<sup>d</sup>: Is the initial input vector from the embedding layer.
