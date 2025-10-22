@@ -5,22 +5,39 @@ Recommender systems operating on large-scale, sparse, tabular data face a fundam
 1. Introduction & Architectural Principles
 The core innovation of the DCN-R architecture is the parallel deployment of two specialized sub-networks that operate on the same input vector: a Cross Network and a Deep Residual Network. This explicit separation of tasks allows each component to perform its function optimally, with their outputs being combined at a final stage to produce a comprehensive prediction.
 
-1.1 The Memorization Component: Cross Network
-The Cross Network is explicitly designed to learn bounded-degree, explicit feature interactions in a highly efficient manner. Standard DNNs struggle with this task, often requiring an excessive number of parameters to learn even simple second-order interactions (e.g., AND(city='Sochi', stars=5)). The Cross Network avoids this combinatorial explosion.
-The architecture consists of a stack of CrossLayers, each defined by the following formula:
+### **1.1. Memory Component: Cross Network**
 
-x<sub>l+1</sub> = x<sub>0</sub> ⊙ (x<sub>l</sub><sup>T</sup>w<sub>l</sub>) + b<sub>l</sub> + x<sub>l</sub>
+#### **Architectural Principle**
+
+The primary goal of the Cross Network is to explicitly and efficiently learn feature interactions of limited degree. While standard deep neural networks (DNNs) can learn these interactions implicitly, this process is inefficient and requires a large number of parameters. The Cross Network addresses this issue by implementing explicit cross-interactions at each layer, achieving high performance with minimal overhead.
+
+The architecture consists of a sequence of CrossLayer layers. Each layer l takes the output of the previous layer x_l and computes the next layer x_{l+1} based on its interaction with the original vector x_0.  This process is described by the following formula:
+
+$$
+x_{l+1} = x_{0} \odot (x_{l}^T w_{l}) + b_{l} + x_{l}
+$$
 
 Where:
-x<sub>l</sub>, x<sub>l+1</sub> ∈ ℝ<sup>d</sup>: Are the output vectors from the l-th and (l+1)-th cross layers, respectively.
+* \( x_l, x_{l+1} \in \mathbb{R}^d \): Are the output vectors from the \(l\)th and \((l+1)\)th cross-layers, respectively.
+* \( x_0 \in \mathbb{R}^d \): This is the **original** input vector from the embedding layer, which is **constantly used in each layer**.
+* \( w_l, b_l \in \mathbb{R}^d \): These are the learnable weight and bias parameters for the \(l\)th layer.
+* \( \odot \): Denotes the element-wise product (Hadamard product).
 
-x<sub>0</sub> ∈ ℝ<sup>d</sup>: Is the initial input vector from the embedding layer.
-w<sub>l</sub>, b<sub>l</sub> ∈ ℝ<sup>d</sup>: Are the learned weight and bias parameters for the l-th layer.
-⊙: Represents the element-wise product (Hadamard product).
+ #### **Formula Decomposition: The Heart of the Mechanism**
 
-The key operation, x<sub>0</sub> ⊙ (x<sub>l</sub><sup>T</sup>w<sub>l</sub>), effectively computes the interactions between the original input x_0 and the learned features from the previous layer x_l in a single, efficient step.
+To understand how this formula creates interactions, let's break it down step by step:
 
-The final + x_l term is a residual connection, which ensures that the network preserves the learned interactions from previous layers as the depth increases. This design allows the Cross Network to generate complex feature crosses with a minimal number of parameters, making it a highly effective memorization engine.
+1. **`x_l^T w_l` (Dot Product):** In the first step, the dot product is calculated between the vector `x_l` from the previous layer and the weight vector `w_l`. The result of this operation is a **single number (scalar)**. This scalar can be interpreted as a "score" or "degree of importance" calculated based on the features obtained in layer `l`. The vector `w_l` learns which combination of features from `x_l` to consider "important".
+
+2. **`x_0 \odot (...)` (Interaction Creation):** Next, this single scalar is multiplied element-wise by the **original input vector `x_0`**. This operation is the core of interaction creation.  It effectively "scales" or "weights" each element of the original vector x_0 according to the "importance" calculated in the previous step. This creates explicit cross-talk between all elements of x_0 and the generalized information from x_l.
+
+3. **`+ b_l` (Bias):** The standard learnable bias vector is added.
+
+4. **`+ x_l` (Residual Connection):** This is a critical component. The output of the previous layer, x_l, is directly added to the result. This ensures that the interactions learned in previous layers are preserved and passed on. The model doesn't relearn everything from scratch at each new layer; it simply adds a new, more complex layer of interactions to its existing knowledge.
+
+#### **Conclusion**
+
+Thanks to this elegant formula, Cross Network explicitly constructs (l+1)-order interactions at each layer l, doing so with O(d) parameters, compared to O(d²) for standard approaches. This makes it an extremely efficient "memorization engine" that is guaranteed to find and exploit the predictive power of explicit feature combinations in the data.
 
 1.2 The Generalization Component: Deep Residual Network
 The Deep Network component is tasked with capturing implicit, high-order, abstract feature patterns that are beyond the scope of explicit interaction learning. It learns the latent, continuous representations of features, enabling generalization to unseen combinations.
