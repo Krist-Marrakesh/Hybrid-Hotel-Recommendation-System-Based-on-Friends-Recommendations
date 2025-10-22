@@ -84,7 +84,6 @@ Where:
 
 Using residual blocks allows us to build a deep and, therefore, highly expressive neural network capable of effective generalization. It doesn't compete with the Cross Network, but rather **complements** it. The Deep subnetwork takes on the task of extracting implicit, complex patterns, while the Cross Network specializes in explicit, combinatorial rules. This synergy is the key to the high accuracy of the final hybrid DCN-R model.
 
-
 2. Complete Network Topology & Data Flow. 
 
 The DCN-R follows a well-defined data flow from input to final prediction.
