@@ -1,4 +1,5 @@
 DCN-R: A Hybrid Deep & Cross Architecture with Residual Connections for Feature Interaction Learning in Recommender Systems
+
 Abstract
 Recommender systems operating on large-scale, sparse, tabular data face a fundamental dichotomy: the need for both memorization and generalization. Memorization, the learning of frequent, explicit feature co-occurrences, is crucial for providing accurate and direct recommendations. Generalization, the discovery of novel, previously unseen feature combinations, is essential for diversity and serendipity. Standard Deep Neural Networks (DNNs) excel at generalization by capturing high-order implicit interactions but are inefficient at learning explicit feature crosses. Conversely, linear models are effective at memorization but fail to generalize. We introduce the Deep & Cross Network with Residual Blocks (DCN-R), a novel hybrid architecture designed to explicitly and efficiently learn feature interactions of both types, thereby achieving a state-of-the-art balance between memorization and generalization for ranking tasks.
 
@@ -51,7 +52,8 @@ F(x<sub>l</sub>): Represents the transformations within the block (e.g., a seque
 + x<sub>l</sub>: Is the identity shortcut connection, which adds the input of the block to its output.
 By stacking these ResBlocks, we can build a very deep and powerful network that can learn highly complex and abstract feature representations without sacrificing training stability. This is our primary engine for generalization.
 
-2. Complete Network Topology & Data Flow
+2. Complete Network Topology & Data Flow. 
+
 The DCN-R follows a well-defined data flow from input to final prediction.
 #Input & Embedding Layer
 The model accepts raw features and transforms them into a unified numerical representation.
@@ -60,17 +62,21 @@ Numerical Features (price, stars, rating_..., etc.): Continuous features are nor
 All resulting vectors are then concatenated to form a single input vector, x<sub>0</sub>.
 
 2.1 Parallel Sub-Network Processing
+
 The input vector x_0 is simultaneously fed into the two core components:
 The Deep Network processes x_0 through an initial linear projection followed by a stack of ResBlocks, producing the deep_out vector.
 The Cross Network processes x_0 through a stack of CrossLayers, producing the cross_out vector.
 
 2.2 Combination & Output Layer
+
 The outputs from the two sub-networks are combined to form a final prediction.
 Concatenation: The deep_out and cross_out vectors are concatenated into a final, comprehensive feature vector that contains information from both memorization and generalization pathways.
 Final Prediction: This final vector is passed through a single, final linear neuron. The output of this neuron is a single scalar value (a logit).
 
 3. Model Output and Objective
+
 The final scalar output is a raw, uncalibrated score. It does not represent a probability. Its sole purpose is to serve as a ranking metric. A higher score for a user-hotel pair indicates a higher predicted relevance or compatibility. The model is trained to minimize a regression loss (e.g., Mean Squared Error) on the was_booked target, effectively learning to assign higher scores to pairs that result in a positive outcome.
 
 4. Conclusion
+
 The DCN-R architecture provides an elegant and effective solution to the central challenge of recommender systems. By explicitly separating the tasks of memorization and generalization into dedicated sub-networks—an efficient Cross Network and a powerful Deep Residual Network—it leverages the strengths of both paradigms. This hybrid approach allows the model to learn both direct, observable feature interactions and deep, abstract patterns, resulting in highly accurate and diverse recommendations.
