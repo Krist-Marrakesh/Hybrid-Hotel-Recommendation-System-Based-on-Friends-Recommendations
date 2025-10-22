@@ -41,6 +41,7 @@ To understand how this formula creates interactions, let's break it down step by
 Thanks to this elegant formula, Cross Network explicitly constructs (l+1)-order interactions at each layer l, doing so with O(d) parameters, compared to O(d²) for standard approaches. This makes it an extremely efficient "memorization engine" that is guaranteed to find and exploit the predictive power of explicit feature combinations in the data.
 
 1.2 The Generalization Component: Deep Residual Network
+
 The Deep Network component is tasked with capturing implicit, high-order, abstract feature patterns that are beyond the scope of explicit interaction learning. It learns the latent, continuous representations of features, enabling generalization to unseen combinations.
 While a standard DNN could be used, we enhance this sub-network with Residual Blocks (ResBlocks), inspired by the seminal ResNet architecture. A standard deep network is prone to the vanishing gradient problem, which impedes the stable training of very deep architectures. Residual connections solve this by providing "shortcut" paths for the gradient to flow.
 Each ResBlock is defined by:
@@ -52,25 +53,24 @@ By stacking these ResBlocks, we can build a very deep and powerful network that 
 
 2. Complete Network Topology & Data Flow
 The DCN-R follows a well-defined data flow from input to final prediction.
-
-2.1 Input & Embedding Layer
+#Input & Embedding Layer
 The model accepts raw features and transforms them into a unified numerical representation.
 Collaborative & Categorical Features (user_id, item_id, city, etc.): Each unique ID or category is mapped to a low-dimensional, dense embedding vector via an nn.Embedding layer. These embeddings are learned during training.
 Numerical Features (price, stars, rating_..., etc.): Continuous features are normalized (e.g., via MinMaxScaler) to ensure uniformity in scale.
 All resulting vectors are then concatenated to form a single input vector, x<sub>0</sub>.
 
-2.2 Parallel Sub-Network Processing
+2.1 Parallel Sub-Network Processing
 The input vector x_0 is simultaneously fed into the two core components:
 The Deep Network processes x_0 through an initial linear projection followed by a stack of ResBlocks, producing the deep_out vector.
 The Cross Network processes x_0 through a stack of CrossLayers, producing the cross_out vector.
 
-2.3 Combination & Output Layer
+2.2 Combination & Output Layer
 The outputs from the two sub-networks are combined to form a final prediction.
 Concatenation: The deep_out and cross_out vectors are concatenated into a final, comprehensive feature vector that contains information from both memorization and generalization pathways.
 Final Prediction: This final vector is passed through a single, final linear neuron. The output of this neuron is a single scalar value (a logit).
 
-4. Model Output and Objective
+3. Model Output and Objective
 The final scalar output is a raw, uncalibrated score. It does not represent a probability. Its sole purpose is to serve as a ranking metric. A higher score for a user-hotel pair indicates a higher predicted relevance or compatibility. The model is trained to minimize a regression loss (e.g., Mean Squared Error) on the was_booked target, effectively learning to assign higher scores to pairs that result in a positive outcome.
 
-5. Conclusion
+4. Conclusion
 The DCN-R architecture provides an elegant and effective solution to the central challenge of recommender systems. By explicitly separating the tasks of memorization and generalization into dedicated sub-networks—an efficient Cross Network and a powerful Deep Residual Network—it leverages the strengths of both paradigms. This hybrid approach allows the model to learn both direct, observable feature interactions and deep, abstract patterns, resulting in highly accurate and diverse recommendations.
