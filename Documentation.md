@@ -37,9 +37,8 @@ To understand how this formula creates interactions, let's break it down step by
 
 4. **`+ x_l` (Residual Connection):** This is a critical component. The output of the previous layer, x_l, is directly added to the result. This ensures that the interactions learned in previous layers are preserved and passed on. The model doesn't relearn everything from scratch at each new layer; it simply adds a new, more complex layer of interactions to its existing knowledge.
 
-#### **Conclusion**
-
 Thanks to this elegant formula, Cross Network explicitly constructs (l+1)-order interactions at each layer l, doing so with O(d) parameters, compared to O(d²) for standard approaches. This makes it an extremely efficient "memorization engine" that is guaranteed to find and exploit the predictive power of explicit feature combinations in the data.
+
 
 1.2 The Generalization Component: Deep Residual Network
 
