@@ -18,10 +18,11 @@ x_{l+1} = x_{0} \odot (x_{l}^T w_{l}) + b_{l} + x_{l}
 $$
 
 Where:
-* \( x_l, x_{l+1} \in \mathbb{R}^d \): Are the output vectors from the \(l\)th and \((l+1)\)th cross-layers, respectively.
-* \( x_0 \in \mathbb{R}^d \): This is the **original** input vector from the embedding layer, which is **constantly used in each layer**.
-* \( w_l, b_l \in \mathbb{R}^d \): These are the learnable weight and bias parameters for the \(l\)th layer.
-* \( \odot \): Denotes the element-wise product (Hadamard product).
+
+-   $x_l, x_{l+1} \in \mathbb{R}^d$: Are the output vectors from the $l$-th and $(l+1)$-th cross layers, respectively.
+-   $x_0 \in \mathbb{R}^d$: Is the **original** input vector from the embedding layer, which is consistently used at every layer.
+-   $w_l, b_l \in \mathbb{R}^d$: Are the learnable weight and bias parameters for the $l$-th layer.
+-   $\odot$: Denotes the element-wise product (Hadamard product).
 
  #### **Formula Decomposition: The Heart of the Mechanism**
 
