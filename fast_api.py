@@ -2,8 +2,6 @@ import sys
 import random
 import traceback
 from typing import List, Dict, Any, Tuple
-
-# Сторонние библиотеки
 import joblib
 import numpy as np
 import pandas as pd
@@ -17,7 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 print("Запуск ML-сервиса на FastAPI...")
 
 
-# PYDANTIC МОДЕЛИ
+# PYDANTIC MODELS
 
 
 class RecommendationRequest(BaseModel):
@@ -43,7 +41,7 @@ class RecommendationResponse(BaseModel):
     message: str | None = None
 
 
-# КЛАССЫ МОДЕЛИ
+# MODEL CLASSES
 
 def set_seed(seed: int = 42):
     random.seed(seed)
@@ -105,46 +103,45 @@ class DCN_RecSys(nn.Module):
         cat_emb_sum_dim = sum([int(np.sqrt(n_cat)) + 1 for n_cat in cat_dims.values()])
         input_dim = emb_dim * 2 + cat_emb_sum_dim + n_num_features
 
-        # Deep-часть
+        # Deep-part
         self.initial_deep_layer = nn.Linear(input_dim, hidden_dim)
         self.res_block1 = ResBlock(hidden_dim, dropout)
         self.res_block2 = ResBlock(hidden_dim, dropout)
 
-        # Cross-часть
+       # Cross-part
         self.cross_network = nn.ModuleList([CrossLayer(input_dim) for _ in range(n_cross_layers)])
 
-        # Финальный слой
+        # Final layer
         final_dim = hidden_dim + input_dim
         self.final_linear = nn.Linear(final_dim, 1)
 
     def forward(self, user_ids: torch.Tensor, item_ids: torch.Tensor, cat_features: torch.Tensor,
                 num_features: torch.Tensor) -> torch.Tensor:
-        # Эмбеддинги
+        # Embeddings
         user_emb = self.user_embedding(user_ids)
         item_emb = self.item_embedding(item_ids)
         cat_embs = [emb(cat_features[:, i]) for i, emb in enumerate(self.cat_embeddings)]
 
-        # Формирование входного вектора x0
+        # Formation of the input vector x0
         x_0 = torch.cat([user_emb, item_emb] + cat_embs + [num_features], dim=1)
 
-        # Прогон через Deep & Cross части
+        # Run through Deep & Cross parts
         deep_out = self.res_block2(self.res_block1(self.initial_deep_layer(x_0)))
         cross_out = x_0
         for layer in self.cross_network:
             cross_out = layer(cross_out)
 
-        # Конкатенация и финальное предсказание
+       # Concatenation and final prediction
         final_input = torch.cat([deep_out, cross_out], dim=1)
         return self.final_linear(final_input).squeeze()
 
 
-# ЛОБАЛЬНОЕ ХРАНИЛИЩЕ АРТЕФАКТОВ
-
+# GLOBAL ARTIFACT STORAGE
 ml_artifacts: Dict[str, Any] = {}
 app = FastAPI(title="Ostrovok Hybrid Recommendation API", version="3.0-clean")
 
 
-# ФУНКЦИИ-ПОМОЩНИКИ
+#ASSISTANT FUNCTIONS
 
 def get_friends_for_user(user_id: int) -> set:
     friendships_df = ml_artifacts.get('friendships_df')
@@ -172,7 +169,7 @@ def _generate_candidates(user_id: int, target_city: str, mode: str) -> set:
 
     candidate_hotels = set(positive_recs)
 
-    # Расширение через похожесть
+    # Expansion through similarity
     for hotel_id in positive_recs:
         internal_id = ml_artifacts['artifacts']['item_id_mapping'].get(hotel_id)
         if internal_id is not None:
@@ -182,14 +179,14 @@ def _generate_candidates(user_id: int, target_city: str, mode: str) -> set:
                             idx in ml_artifacts['reverse_item_map']]
             candidate_hotels.update(neighbor_ids)
 
-    # Fallback-стратегия
+   # Fallback strategy
     if len(candidate_hotels) < 20:
         popular_hotels = \
         main_df[main_df['city'] == target_city].sort_values(by='user_reviews_count', ascending=False).head(100)[
             'item_id'].tolist()
         candidate_hotels.update(popular_hotels)
 
-    # Финальная фильтрация
+    # Final filtration
     city_hotels = set(main_df[main_df['city'] == target_city]['item_id'].unique())
     candidate_hotels.intersection_update(city_hotels)
     candidate_hotels.difference_update(negative_filter)
@@ -220,7 +217,7 @@ def preprocess_for_ranking(items_df: pd.DataFrame, user_id: int) -> Tuple[torch.
     return X_collab_user, X_collab_item, X_cat, X_num
 
 
-# ЛОГИКА ЗАПУСКА СЕРВЕРА
+
 @app.on_event("startup")
 def load_artifacts():
     print("INFO:     Загрузка артефактов при старте сервера...")
@@ -228,13 +225,13 @@ def load_artifacts():
         device = torch.device("cpu")
         ml_artifacts['device'] = device
 
-        # Загрузка данных (In-Memory DB)
+        # Loading data (In-Memory DB)
         main_df_raw = pd.read_csv("hackathon_augmented_data.csv")
         main_df_raw.rename(columns={'guest_id': 'user_id', 'hotel_id': 'item_id'}, inplace=True)
         ml_artifacts['main_df'] = main_df_raw
         ml_artifacts['friendships_df'] = pd.read_csv("friendships.csv")
 
-        # Воссоздание признаков, сгенерированных перед обучением
+        # Recreating features generated before training
         print("INFO:     Воссоздание признаков для инференса...")
         main_df_raw['price_per_star'] = (main_df_raw['price_rub'] / main_df_raw['stars']).replace([np.inf, -np.inf],
                                                                                                   0).fillna(0)
@@ -243,7 +240,7 @@ def load_artifacts():
                                                                                                0).fillna(0)
         main_df_raw['location_premium'] = main_df_raw['rating_overall'] - main_df_raw['rating_location']
 
-        # Загрузка ML-артефактов
+        # Loading ML artifacts
         print("INFO:     Загрузка ML артефактов (модели, скейлеры, энкодеры)...")
         ml_artifacts['artifacts'] = joblib.load("artifacts.gz")
         model_dims = joblib.load("model_dims.gz")
@@ -258,7 +255,7 @@ def load_artifacts():
         model.eval()
         ml_artifacts['final_model'] = model
 
-        # Инициализация k-NN модели для поиска похожих
+        # Initialization and loading of DCN model weights
         nn_model = NearestNeighbors(n_neighbors=16, metric='cosine', algorithm='brute')
         nn_model.fit(ml_artifacts['item_embeddings'])
         ml_artifacts['nn_model'] = nn_model
@@ -272,7 +269,7 @@ def load_artifacts():
         sys.exit(1)
 
 
-# ЭНДПОИНТЫ API
+# API
 @app.get("/similar_items", response_model=SimilarItemsResponse)
 def get_similar_items_endpoint(item_id: int = Query(..., example=123), n: int = Query(10, ge=1, le=50)):
     internal_id = ml_artifacts['artifacts']['item_id_mapping'].get(item_id)
@@ -337,4 +334,5 @@ def get_recommendations_endpoint(request_data: RecommendationRequest):
 
 
 if __name__ == '__main__':
+
     uvicorn.run("fast_api:app", host="0.0.0.0", port=8000, reload=True)
