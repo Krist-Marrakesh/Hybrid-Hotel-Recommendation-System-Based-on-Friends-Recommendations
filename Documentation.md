@@ -123,7 +123,9 @@ x_{l+1} = \text{ReLU}(F(x_l, \{W_i\}) + x_l)
 $$
 Where:
 *   $x_l$ and $x_{l+1}$: Are the input and output vectors for the $l$-th residual block.
-*   $F(x_l, \{W_i\})$: Is the residual function learned by the layers within the block, typically a sequence of `Linear -> BatchNorm -> ReLU -> Dropout`.
+*   $F(x_l, \{W_i\})$: Is the residual function learned by the layers within the block, typically a sequence of
+*    `Linear -> BatchNorm -> ReLU -> Dropout`.
+*    `Linear_2 -> BatchNorm`
 *   $+ x_l$: Is the **identity shortcut connection**. The input $x_l$ is directly added to the output of the transformation $F$.
 
 This shortcut allows gradients to flow unimpeded during backpropagation, enabling stable training of very deep networks.
