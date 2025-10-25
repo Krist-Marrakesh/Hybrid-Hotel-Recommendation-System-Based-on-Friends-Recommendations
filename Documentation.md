@@ -41,10 +41,10 @@ The initial and most critical stage of the network is to translate the high-dime
 
 *   **Numerical Processing:** Numerical features are processed in parallel through a `MinMaxScaler`. This standardizes their range (typically to $$), preventing features with large magnitudes from disproportionately influencing the network's learning process.
 
-*   **Input Vector Assembly ($x_0$):** The outputs from all embedding layers and the processed numerical features are concatenated into a single, flat, and wide vector, denoted as $x_0$. This vector serves as the common entry point for the next stage of parallel processing.
+*   **Input Vector Assembly ($x_0$):** The outputs from all embedding layers and the processed numerical features are concatenated into a single, flat, and wide vector, denoted as $x_0$. This vector represents the complete state of the user-item interaction at the input level and serves as the common entry point for the next stage of parallel processing.
 
 #### Stage II: Parallel Feature Extraction - The Dual-Stream Core
-The cornerstone of the DCN-R architecture is its dual-stream processing core, where the input vector $x_0$ is simultaneously fed into two architecturally distinct sub-networks.
+he cornerstone of the DCN-R architecture is its dual-stream processing core, where the input vector $x_0$ is simultaneously fed into two architecturally distinct sub-networks, each specialized for a different type of feature learning.
 
 *   **Stream A: The Cross Network (Explicit Interaction Learning):** This stream processes $x_0$ through a stack of Cross Layers. Each layer is meticulously designed to create explicit feature interactions of an increasing order in a parameter-efficient manner. This stream is the model's **memorization engine**.
 
