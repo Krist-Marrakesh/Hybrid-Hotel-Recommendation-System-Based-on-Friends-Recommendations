@@ -133,9 +133,63 @@ Where $y_i$ is the ground-truth label (0 or 1) and $\hat{y}_i$ is the model's sc
 
 We use the **AdamW optimizer** for its superior handling of weight decay. The learning rate is dynamically adjusted using a **`ReduceLROnPlateau` scheduler**, which reduces the learning rate when the validation loss stops improving.
 
-#### **5.3. Regularization and Hyperparameter Tuning**
+5.3. Regularization and Hyperparameter Optimization
 
-To prevent overfitting, we employ **Dropout** within each ResBlock and **Weight Decay (L2 Regularization)** via the AdamW optimizer. The optimal combination of all critical hyperparameters was discovered empirically using the **Optuna framework** for automated and efficient searching.
+Given the high capacity of the DCN-R architecture and the inherent sparsity of recommendation datasets, a robust and multi-faceted strategy to prevent overfitting is not just beneficial, but mission-critical. Our approach combines several layers of regularization with a systematic, automated process for hyperparameter tuning.
+    Regularization Techniques
+
+We employ a combination of explicit, implicit, and architectural regularization to ensure the model learns generalizable patterns rather than memorizing noise in the training data.
+
+   Dropout (Explicit Regularization): We apply Dropout layers within each Residual Block of the Deep Network. During training, Dropout randomly sets a fraction of neuron activations to zero at each update. This technique disrupts co-adaptation between neurons, forcing the network to learn more robust and redundant representations. It prevents the deep component from becoming overly reliant on any single feature pathway, thereby improving its ability to generalize to unseen data.
+
+   Weight Decay (L2 Regularization): We utilize the AdamW optimizer, which implements a decoupled version of weight decay. Unlike standard L2 regularization in Adam, AdamW separates the weight decay term from the gradient update, preventing it from being affected by the adaptive learning rates. This often leads to better generalization and more stable training. Weight decay adds a penalty to the loss function proportional to the squared magnitude of the model's weights, encouraging the model to find solutions with smaller weights, which typically correspond to simpler and less overfit models.
+
+   Architectural Regularization: The Cross Network itself acts as a form of architectural regularization. By explicitly constraining the feature interactions to a specific polynomial form at each layer, it provides a strong inductive bias. This prevents the model from learning spurious, arbitrarily complex high-order interactions that might exist in the training data but are unlikely to generalize well.
+
+   Automated Hyperparameter Optimization with Optuna
+
+The optimal combination of architectural parameters (e.g., embedding dimensions, network depth/width) and training parameters (e.g., learning rate, regularization strength) is non-trivial and exists in a vast, high-dimensional space. Manual tuning is therefore inefficient and unlikely to find the global optimum.
+
+To address this, we integrated the Optuna framework for automated, state-of-the-art hyperparameter optimization. We defined a wide search space to allow Optuna to explore not just training dynamics but also the model's architecture itself:
+
+
+   Architecture: emb_dim, hidden_dim, n_cross_layers, n_res_blocks, dropout.
+
+
+   Optimization: lr, batch_size, weight_decay, optimizer_name (AdamW vs. Adam).
+
+
+   LR Scheduler: lr_scheduler_patience, lr_scheduler_factor.
+
+
+The optimization process was driven by an intelligent search strategy:
+
+   Sampler: We used the Tree-structured Parzen Estimator (TPE), a form of Bayesian optimization that uses the history of past trials to inform which hyperparameter combinations to try next.
+
+   Pruner: The MedianPruner was employed to automatically stop unpromising trials early if their intermediate performance was significantly worse than the median of completed trials at the same step.
+
+For each trial, Optuna trained a model, monitoring its validation LogLoss at each epoch and leveraging an Early Stopping mechanism to terminate training if no improvement was observed for 5 consecutive epochs. The final value of the best validation LogLoss was used as the objective to minimize.
+   Analysis of Optimization Results
+
+The automated search process, conducted over 300 trials, provides critical insights into the model's behavior and the relative importance of different hyperparameters.
+
+<img width="700" height="500" alt="изображение" src="https://github.com/user-attachments/assets/e90bfef8-c40f-4877-a6c7-89ff8327b033" />
+
+
+Figure 1: Optimization History of the Hyperparameter Search. The plot illustrates the progression of the validation loss (LogLoss) over 300 trials. A clear downward trend is visible, indicating that the TPE sampler successfully navigated the search space to find progressively better hyperparameter configurations. The final convergence to a low LogLoss value of 0.1886 demonstrates the effectiveness of the automated tuning process.
+
+[<img width="700" height="500" alt="изображение" src="https://github.com/user-attachments/assets/90b38603-2c18-4a71-8ea8-2f11edde7cb7" />
+
+
+Figure 2: Hyperparameter Importances as Determined by Optuna. This plot quantifies the relative impact of each hyperparameter on the final validation loss. The analysis reveals several key findings:
+
+   Dominance of Regularization: The most influential parameters are dropout and weight_decay. This is a crucial insight, confirming that for this high-capacity model and clean dataset, effective regularization is the single most important factor for achieving strong generalization.
+
+   Importance of Learning Rate: The lr is the next most important parameter, which is expected, as it governs the fundamental dynamics of the optimization process.
+
+   Robustness of Architecture: Architectural parameters such as hidden_dim, n_cross_layers, and n_res_blocks have a lower, yet still significant, importance. This suggests that while a well-chosen architecture is necessary, the model's performance is more sensitive to how it is trained and regularized than to its exact geometry within the tested ranges.
+
+In conclusion, the systematic and automated approach to hyperparameter tuning was not merely a step in the process, but a core part of our research. It allowed us to empirically validate the need for strong regularization and discover a high-performing, efficient, and robust configuration for the final DCN-R model.
 
 #### **5.4. Ablation Studies**
 
@@ -150,8 +204,51 @@ To validate our architectural choices, we conducted a series of ablation studies
 
 **Analysis:** The ablation study provides strong evidence for our design. The significantly worse performance of models (2) and (3) confirms the necessity of a **hybrid architecture**. The performance drop in model (4) empirically validates our core hypothesis that **replacing a standard MLP with a Deep Residual Network provides a tangible improvement** in the model's generalization capability.
 
-### **6. Conclusion & Future Work**
 
-#### **6.1. Conclusion**
+#### 5.5. Analysis of Optimal Hyperparameters
+
+The hyperparameter optimization process converged on a configuration that reveals key insights into the model's behavior on our dataset:
+
+*   **`'dropout': 0.6`**: The selection of a high dropout rate underscores the model's high capacity and its propensity to overfit on the clean, filtered dataset. Optuna correctly identified that strong regularization was the most critical factor for achieving good generalization.
+
+*   **`'emb_dim': 16`**: The optimizer preferred the smallest available embedding dimension. This suggests that a compact vector representation was sufficient to capture the semantic essence of users and items, leading to a more parameter-efficient model.
+
+*   **`'n_res_blocks': 1`**: A relatively shallow Deep Network with only one residual block was found to be optimal. This implies that for this specific task, extremely deep abstractions were not necessary, and a single powerful non-linear transformation block was sufficient.
+
+*   **`'batch_size': 512`**: The choice of the smallest batch size often acts as a form of stochastic regularization, helping the optimizer to settle in a more robust local minimum, which aligns with the need for strong regularization.
+
+In summary, the optimization process did not converge on a "large-as-possible" model, but rather on an **elegant, efficient, and heavily regularized architecture** perfectly tailored to the signal-to-noise ratio of the training data.
+
+### 6 Deployment Architecture & API
+
+To make the trained DCN-R model accessible for real-world applications, we designed and implemented a production-ready deployment architecture based on a microservices paradigm.
+
+#### 6.1. System Design
+
+The system consists of two primary services, orchestrated by Docker Compose:
+
+1.  **ML Service (FastAPI):** A dedicated, stateless service that encapsulates the entire ML pipeline. Its sole responsibility is to perform complex computations. It exposes two key endpoints:
+    *   `POST /recommendations`: Executes the full two-stage recommendation pipeline (candidate generation and ranking) and returns a personalized, sorted list of hotel IDs.
+    *   `GET /similar_items`: A utility endpoint that finds hotels similar to a given item ID using a k-NN index on the learned item embeddings.
+
+2.  **Database (PostgreSQL):** A persistent database that stores all core data (users, hotels, reviews, friendships).
+
+This decoupled architecture ensures that the ML logic is isolated from the main application backend, allowing for independent scaling, updates, and maintenance.
+
+#### 6.2. API and Data Flow
+
+When a user requests recommendations, the flow is as follows:
+1.  The user's browser sends a request to a **Main Application Backend** (not included in this repository).
+2.  The Main Backend authenticates the user and then sends a `POST` request to our **ML Service** at `/recommendations`, providing the `user_id` and `city`.
+3.  Our ML Service queries the **PostgreSQL database** to fetch the necessary data (friends, reviews, hotel features).
+4.  It executes the full recommendation logic and returns a ranked list of `hotel_id`s.
+5.  The Main Backend receives this list, enriches it with additional data (e.g., hotel names, photos, prices from the DB), and sends the final, fully-formed response to the user's browser.
+
+This design makes the ML model a true "black box", simplifying integration for the rest of the development team.
+
+
+### **7. Conclusion & Future Work**
+
+#### **7.1. Conclusion**
 
 In this work, we presented the **DCN-R**, a hybrid neural architecture that effectively addresses the trade-off between memorization and generalization. By synthesizing a specialized Cross Network for explicit interaction learning and a powerful Deep Residual Network for implicit pattern discovery, the model produces a comprehensive feature representation that leverages both the explicit evidence and the latent structure within the data, achieving a strong validation RMSE of 0.268.
