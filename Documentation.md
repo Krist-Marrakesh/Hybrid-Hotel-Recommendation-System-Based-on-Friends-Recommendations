@@ -160,10 +160,12 @@ To ensure the robustness of our model and validate our architectural choices, we
 
 The optimal combination of architectural and training parameters was discovered using the **Optuna framework**. We defined a wide search space for key parameters such as `emb_dim`, `hidden_dim`, `n_cross_layers`, `n_res_blocks`, `dropout`, `lr`, and `weight_decay`. The optimization process, driven by a TPE sampler and a Median Pruner, was run for 300 trials with an Early Stopping mechanism.
 
-`[ВСТАВЬ СЮДА ГРАФИК optimization_history.png]`
+<img width="700" height="500" alt="optimization_history" src="https://github.com/user-attachments/assets/4624e5b6-c25b-4aad-9889-953a1752e3b8" />
+
 *Figure 1: Optimization history. The plot shows a clear convergence to a low LogLoss value of 0.1886, demonstrating the effectiveness of the automated tuning.*
 
-`[ВСТАВЬ СЮДА ГРАФИК param_importances.png]`
+<img width="700" height="500" alt="param_importances" src="https://github.com/user-attachments/assets/ee16b646-9719-4c68-bb48-8ce080e9c8a8" />
+
 *Figure 2: Hyperparameter importances. The results reveal that regularization parameters (`dropout`, `weight_decay`) and the `learning rate` were the most critical factors for achieving strong generalization on our high-signal dataset.*
 
 The process converged on an **elegant, efficient, and heavily regularized architecture** (`dropout=0.6`, `emb_dim=16`, `n_res_blocks=1`), rather than a "large-as-possible" model, perfectly tailoring it to the signal-to-noise ratio of the training data.
