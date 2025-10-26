@@ -230,6 +230,22 @@ When a user requests recommendations, the flow is as follows:
 
 This design makes the ML model a true "black box", simplifying integration for the rest of the development team.
 
+   6.3. Model Registry and Artifact Management
+
+   To ensure robustness, versioning, and scalability, our architecture separates the storage of model metadata from the storage of large binary artifacts. We implemented a Model Registry pattern using our primary PostgreSQL database.
+   A dedicated table, ml_models, serves as a central catalog for all trained models. For each model version, this table stores:
+   Metadata: The model's version tag, creation timestamp, performance metrics (AUC, LogLoss), and the optimal hyperparameters discovered during training.
+   
+   ointers: Instead of storing the large binary files directly, the table holds paths to the model weights (.pth), item embeddings (.npy), and other serialized objects (.gz).
+   The large artifacts themselves are stored in a dedicated, high-throughput Object Storage service (e.g., Amazon S3, Google Cloud Storage).
+   This decoupled approach provides several key advantages:
+   
+   Scalability: The API service can efficiently download artifacts from the object store without overloading the transactional database.
+   Versioning and Governance: The Model Registry acts as a single source of truth, providing a clear history of all experiments and production models.
+   
+   Atomic Deployments: Promoting a new model to production is a simple, atomic transaction in the database (updating an is_active flag), which makes the deployment process safe and easily reversible.
+   
+   Upon startup, the API service queries the registry for the active model version, retrieves the artifact paths, downloads them from the object store, and loads them into memory. This ensures that the service always runs with the correct, centrally-managed model version.
 
 #### 7.1. Conclusion
 
