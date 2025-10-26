@@ -1,6 +1,6 @@
 #Hybrid-Hotel-Recommendation-System-Based-on-Friends-Recommendations
 
-A project developed as part of the "Ostrovok" hackathon. This is a full-fledged ML service implementing a hybrid hotel recommendation system based on social connections and the user's personal preferences.
+This is a full-fledged ML service implementing a hybrid hotel recommendation system based on social connections and the user's personal preferences.
 
 ## Key Features
 
