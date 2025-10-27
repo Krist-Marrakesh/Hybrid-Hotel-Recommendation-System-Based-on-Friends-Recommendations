@@ -43,7 +43,9 @@ The DCN-R is architected as a multi-stream feature learning pipeline designed to
 
 This parallel design ensures that the model learns both explicit feature crosses and implicit deep patterns concurrently.
 
-`[diagram from Draw.io)]`
+
+<img width="561" height="1160" alt="АРХИтектура drawio" src="https://github.com/user-attachments/assets/415d265d-4871-42b3-89a6-438196c13556" />
+
 
 ### **4. Architectural Components in Detail**
 
