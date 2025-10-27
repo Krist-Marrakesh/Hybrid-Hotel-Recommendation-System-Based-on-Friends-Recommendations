@@ -12,24 +12,24 @@ Let's figure out what's what.
 Memorization is the learning of direct, frequently occurring feature interactions, critical to exploiting observed patterns in historical data, while Generalization is the ability to discover hidden, higher-order patterns and apply this understanding to new, previously unseen combinations of features, critical to diversity and randomness.
 While the original Deep & Cross Network (DCN) and its successor DCN-V2 successfully addressed the need for explicit feature crossing, their deep component typically relies on a standard Multi-Layer Perceptron (MLP). But, while effective, presents a potential **representational bottleneck**. As the complexity of implicit user preferences grows, a simple MLP may struggle to learn sufficiently deep and expressive feature representations without suffering from gradient degradation and optimization challenges.
 
-This paper introduces the **Deep & Cross Network with Residual Blocks (DCN-R)**, an architecture that directly addresses this limitation. Our core hypothesis is that by replacing the standard MLP with a deep network composed of **Residual Blocks (ResBlocks)**, we can significantly enhance the generalization power of the deep component. The identity shortcut connections inherent in ResBlocks facilitate the stable training of much deeper networks, allowing the model to capture more complex and higher-order feature abstractions than is feasible with a conventional MLP.
+This paper introduces the **Deep & Cross Network with Residual Blocks (DCN-R)**, an architecture that directly addresses this limitation. Our core hypothesis is that by replacing the standard MLP with a deep network composed of **Residual Blocks (ResBlocks)**, we can significantly enhance the generalization power of the deep component. Thanks to the *Skip connections* inherent in ResBlocks, we can achieve stable training of much deeper networks, allowing the model to capture more complex and high-level feature abstractions than is possible with a conventional MLP.
 
 Our primary contributions are:
 1.  The integration of Residual Blocks into the deep component of a DCN-style network, enhancing its ability to capture complex, high-order feature abstractions.
-2.  A comprehensive, end-to-end description of the model's topology, training methodology, and inference pipeline.
-3.  An empirical validation of our architectural choices through an ablation study, demonstrating the necessity of both the hybrid structure and the residual connections.
+2.  Develop a comprehensive, end-to-end description of the model architecture, training methodology, and inference pipeline that ensures reproducibility and transparency of experiments.
+3.  An empirical validation of our architectural choices through an ablation study, demonstrating the necessity the of both the hybrid structure and residual connections in achieving optimal results.
 
 ### **2. Related Work**
 
-The architecture of DCN-R builds upon a rich body of research in deep learning for recommendations. It can be seen as a direct evolution of several key paradigms:
+The architecture of DCN-R builds upon a rich lineage of research in deep learning for recommendation systems, unifying several influential paradigms into a coherent framework.
 
-*   **Wide & Deep Learning:** Proposed by Google, this was a seminal work that first introduced the concept of a hybrid architecture combining a simple linear model (Wide, for memorization) and a DNN (Deep, for generalization). DCN-R replaces the manually-engineered Wide component with a more powerful and automated Cross Network.
+Early progress in this direction was marked by **Wide & Deep Learning**, proposed by Google — a seminal work that introduced the idea of hybrid architectures combining a simple linear component (Wide, for memorization) with a deep neural network (Deep, for generalization). This formulation established the foundation for balancing explicit feature interactions with implicit representation learning.
 
-*   **Factorization Machines (FMs) and DeepFM:** FMs introduced an elegant way to model second-order feature interactions. DeepFM combined this with a DNN in parallel. DCN-R's Cross Network can be viewed as a more general and powerful way to learn higher-order interactions than the FM component.
+Building upon research developments popularized by *Google*, Factorization Machines (FMs) introduced an elegant and computationally efficient mechanism for modeling second-order feature interactions. Their neural extension, DeepFM, combined the strengths of FMs and DNNs in parallel, enabling the model to jointly learn both low- and high-order interactions. However, these architectures were still limited in their ability to systematically model higher-order cross-feature structures.
 
-*   **Attention-based Models (e.g., AutoInt):** More recent approaches use attention mechanisms to learn the importance of different feature interactions. While highly effective, attention mechanisms typically learn interactions implicitly. The Cross Network in DCN-R provides a more explicit and structured alternative for learning these interactions.
+To address these limitations, the **Deep & Cross Network (DCN)** introduced a Cross Network component — a learnable and more generalized mechanism for feature crossing, effectively replacing the manually engineered Wide component with an automated alternative. Subsequent models, such as AutoInt, further explored attention-based approaches, leveraging self-attention to learn the relative importance of different feature combinations. While highly expressive, attention mechanisms tend to model such interactions implicitly, often at the cost of interpretability and structural control.
 
-Our work is positioned as a refinement of the DCN paradigm, specifically focusing on enhancing its generalization capabilities through the integration of proven techniques from computer vision, namely residual connections.
+Our work refines the DCN paradigm by enhancing its generalization capabilities through the integration of residual connections — a proven architectural technique widely adopted in computer vision. By bridging the advantages of explicit cross-feature modeling and stable gradient propagation, DCN-R achieves a more balanced and extensible representation learning framework.
 
 ### **3. Overall Architecture & Data Flow**
 
