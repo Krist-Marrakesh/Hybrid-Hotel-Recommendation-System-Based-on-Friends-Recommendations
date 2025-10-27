@@ -6,12 +6,11 @@ Recommender systems operating on large-scale, sparse, tabular datasets prevalent
 
 ### **1. Introduction**
 
-Recommender systems have become a ubiquitous and mission-critical component of the modern digital landscape. Their efficacy hinges on their ability to effectively model complex user preferences and item characteristics from large-scale, sparse, and high-cardinality tabular datasets. At the heart of this challenge lies a fundamental design dichotomy: the trade-off between **memorization** and **generalization**.
+Recommender systems have become a ubiquitous and mission-critical component of the modern digital landscape, their efficacy hinges on their ability to effectively model complex user preferences and item characteristics from large-scale, sparse, and high-cardinality tabular datasets. So, at the heart of this challenge lies a fundamental design dichotomy: the trade-off between memorization and generalization.
+Let's figure out what's what.
 
-*   **Memorization** is the learning of direct, frequently co-occurring feature interactions, crucial for exploiting observable patterns in historical data.
-*   **Generalization** is the capacity to discover higher-order, latent patterns and apply this understanding to novel, previously unseen feature combinations, which is essential for diversity and serendipity.
-
-While the original Deep & Cross Network (DCN) and its successor DCN-V2 successfully addressed the need for explicit feature crossing, their deep component typically relies on a standard Multi-Layer Perceptron (MLP). This choice, while effective, presents a potential **representational bottleneck**. As the complexity of implicit user preferences grows, a simple MLP may struggle to learn sufficiently deep and expressive feature representations without suffering from gradient degradation and optimization challenges.
+Memorization is the learning of direct, frequently occurring feature interactions, critical to exploiting observed patterns in historical data, while Generalization is the ability to discover hidden, higher-order patterns and apply this understanding to new, previously unseen combinations of features, critical to diversity and randomness.
+While the original Deep & Cross Network (DCN) and its successor DCN-V2 successfully addressed the need for explicit feature crossing, their deep component typically relies on a standard Multi-Layer Perceptron (MLP). But, while effective, presents a potential **representational bottleneck**. As the complexity of implicit user preferences grows, a simple MLP may struggle to learn sufficiently deep and expressive feature representations without suffering from gradient degradation and optimization challenges.
 
 This paper introduces the **Deep & Cross Network with Residual Blocks (DCN-R)**, an architecture that directly addresses this limitation. Our core hypothesis is that by replacing the standard MLP with a deep network composed of **Residual Blocks (ResBlocks)**, we can significantly enhance the generalization power of the deep component. The identity shortcut connections inherent in ResBlocks facilitate the stable training of much deeper networks, allowing the model to capture more complex and higher-order feature abstractions than is feasible with a conventional MLP.
 
