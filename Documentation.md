@@ -1,6 +1,27 @@
 # **DCN-R: A Hybrid Deep & Cross Architecture with Residual Connections for Feature Interaction Learning in Recommender Systems**
 
-### **Abstract**
+### **Motivation and Problem Statement**
+
+In the travel industry, choosing a hotel is often driven not only by price or photos but also by trust in the source of recommendations. Official reviews tend to feel impersonal, and algorithmic suggestions often lack a sense of human context.
+
+At the same time, we know that recommendations from friends and acquaintances are perceived as far more reliable and relevant. However, most booking platforms — including ours — still lack a convenient way to collect and use such socially informed feedback. Travelers end up asking their friends directly, searching for advice in public forums, or relying on random viral videos on social media.
+I want to provide users with socially personalized recommendations to increase engagement, trust, and booking conversion.
+
+"Friends Recommend" is a feature concept designed to solve exactly this gap: it enables a traveler to receive personalized hotel recommendations based on the experience and reviews of their social connections. The functionality would allow users to:
+Discover hotels their friends have actually stayed in.
+Read fresh, trustworthy, and personally relevant reviews.
+Increase engagement and user trust in the platform.
+
+### *Functional Goal*
+We set out to build a prototype of the “Friends Recommend”  — a system that lets a user find hotels visited by their friends, followers, or colleagues and view their feedback.
+
+### *User Stories*:
+As a traveler, I want to see hotel recommendations from my friends so that I can trust their quality and relevance.
+As a hotel owner, I want satisfied guests to easily recommend my hotel to their friends.
+This use-case became our experimental ground. Since no real social-graph dataset was available, we decided to synthetically generate one and test different architectures for learning personalized recommendations. This led us to design and evaluate the Deep & Cross Network with Residual Blocks (DCN-R) — a hybrid model aimed at capturing both explicit friend-based interactions and deep latent patterns in user–item behavior.
+
+
+### **Abstraction**
 
 In industrial recommendation systems, data is typically huge, sparse, and tabular—and this creates a key challenge: the need to simultaneously achieve effective **memorization** and **generalization**. Memorization, defined as the learning of frequent, explicit feature co-occurrences, is critical for delivering high-accuracy recommendations based on direct evidence. Generalization, conversely, is the ability to discover novel, higher-order feature combinations, which is essential for model robustness and the serendipitous discovery of diverse content. While standard Deep Neural Networks (DNNs) excel at generalization, they are notoriously parameter-inefficient at learning simple, explicit feature crosses. To address this dichotomy, we introduce the **Deep & Cross Network with Residual Blocks (DCN-R)**, a novel hybrid architecture engineered to explicitly model feature interactions of all orders by leveraging two specialized sub-networks in parallel. This composite design allows the DCN-R to learn a rich, comprehensive representation of the data, achieving a state-of-the-art balance between recommendation accuracy and diversity for ranking tasks.
 
