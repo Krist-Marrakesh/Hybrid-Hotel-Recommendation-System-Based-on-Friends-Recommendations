@@ -16,8 +16,10 @@ Increase engagement and user trust in the platform.
 We set out to build a prototype of the “Friends Recommend”  — a system that lets a user find hotels visited by their friends, followers, or colleagues and view their feedback.
 
 ### *User Stories*:
-As a traveler, I want to see hotel recommendations from my friends so that I can trust their quality and relevance.
-As a hotel owner, I want satisfied guests to easily recommend my hotel to their friends.
+*As a traveler, I want to see hotel recommendations from my friends so that I can trust their quality and relevance.*
+
+*As a hotel owner, I want satisfied guests to easily recommend my hotel to their friends.*
+
 This use-case became our experimental ground. Since no real social-graph dataset was available, we decided to synthetically generate one and test different architectures for learning personalized recommendations. This led us to design and evaluate the Deep & Cross Network with Residual Blocks (DCN-R) — a hybrid model aimed at capturing both explicit friend-based interactions and deep latent patterns in user–item behavior.
 
 
