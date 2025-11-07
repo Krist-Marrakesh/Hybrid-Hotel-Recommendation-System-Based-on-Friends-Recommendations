@@ -28,7 +28,7 @@ In industrial recommendation systems, data is typically huge, sparse, and tabula
 
 ### **1. Introduction**
 
-Recommender systems have become a ubiquitous and mission-critical component of the modern digital landscape, their efficacy hinges on their ability to effectively model complex user preferences and item characteristics from large-scale, sparse, and high-cardinality tabular datasets. So, at the heart of this challenge lies a fundamental design dichotomy: the trade-off between memorization and generalization.
+Inasmuch as recommender systems have become a ubiquitous and mission-critical component of the modern digital landscape, their efficacy hinges on their ability to effectively model complex user preferences and item characteristics from large-scale, sparse, and high-cardinality tabular datasets. So, at the heart of this challenge lies a fundamental design dichotomy: the trade-off between memorization and generalization.
 Let's take a closer look at what's going on
 
 Memorization is the learning of direct, frequently occurring feature interactions, critical to exploiting observed patterns in historical data, while Generalization is the ability to discover hidden, higher-order patterns and apply this understanding to new, previously unseen combinations of features, critical to diversity and randomness.
