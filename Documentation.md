@@ -4,7 +4,7 @@
 
 In the travel industry, choosing a hotel is often driven not only by price or photos but also by trust in the source of recommendations. Official reviews tend to feel impersonal, and algorithmic suggestions often lack a sense of human context.
 
-At the same time, we know that recommendations from friends and acquaintances are perceived as far more reliable and relevant. However, most booking platforms — including ours — still lack a convenient way to collect and use such socially informed feedback. Travelers end up asking their friends directly, searching for advice in public forums, or relying on random viral videos on social media.
+At the same time, we know that recommendations from friends and acquaintances are perceived as far more reliable and relevant. However, most booking platforms still lack a convenient way to collect and use such socially informed feedback. Travelers end up asking their friends directly, searching for advice in public forums, or relying on random viral videos on social media.
 I want to provide users with socially personalized recommendations to increase engagement, trust, and booking conversion.
 
 "Friends Recommend" is a feature concept designed to solve exactly this gap: it enables a traveler to receive personalized hotel recommendations based on the experience and reviews of their social connections. The functionality would allow users to:
