@@ -19,7 +19,7 @@ We set out to build a prototype of the “Friends Recommend”  — a system tha
 
 *As a hotel owner, I want satisfied guests to easily recommend my hotel to their friends.*
 
-This use-case became our experimental ground. Since no real social-graph dataset was available, we decided to synthetically generate one and test different architectures for learning personalized recommendations. This led us to design and evaluate the Deep & Cross Network with Residual Blocks (DCN-R) — a hybrid model aimed at capturing both explicit friend-based interactions and deep latent patterns in user–item behavior.
+Since no real social-graph dataset was available, we decided to synthetically generate one and test different architectures for learning personalized recommendations. This led us to design and evaluate the Deep & Cross Network with Residual Blocks (DCN-R) — a hybrid model aimed at capturing both explicit friend-based interactions and deep latent patterns in user–item behavior.
 
 
 ### **Abstraction**
