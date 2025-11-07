@@ -10,7 +10,6 @@ I want to provide users with socially personalized recommendations to increase e
 "Friends Recommend" is a feature concept designed to solve this gap: it enables a traveler to receive personalized hotel recommendations based on the experience and reviews of their social connections. The functionality would allow users to:
 Discover hotels their friends have actually stayed in.
 Read fresh, trustworthy, and personally relevant reviews.
-Increase engagement and user trust in the platform.
 
 ### *Functional Goal*
 We set out to build a prototype of the “Friends Recommend”  — a system that lets a user find hotels visited by their friends, followers, or colleagues and view their feedback.
