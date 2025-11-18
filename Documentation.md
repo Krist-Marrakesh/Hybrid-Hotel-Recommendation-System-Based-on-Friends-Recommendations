@@ -165,6 +165,9 @@ Where:
 
 The `BCEWithLogitsLoss` function is highly optimized, as it combines the sigmoid operation and the BCE calculation in a single, numerically stable step. Minimizing this loss function directly encourages the model to output high scores for positive examples and low scores for negative examples, which is an excellent proxy for optimizing ranking quality.
 
+Although BCEWithLogitsLoss is the canonical choice for binary classification, in our setup the final output is used purely as a ranking score.
+For such score-based ranking models, MSE often works as a strong and stable proxy objective, because the goal is not to predict calibrated probabilities but to enforce relative ordering.
+We empirically found that MSE leads to equal or better ranking performance for this dataset.
 
 #### **5.2. Optimization Strategy**
 
