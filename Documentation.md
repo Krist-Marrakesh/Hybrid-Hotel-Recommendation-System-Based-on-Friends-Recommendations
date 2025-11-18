@@ -133,11 +133,6 @@ The final stage integrates the knowledge from both streams.
 $$
 \mathbf{v}_{\text{final}} = [ \mathbf{cross}_{\text{out}} \oplus \mathbf{deep}_{\text{out}} ]
 $$
-
-$$
-\text{Score} = \mathbf{w}_{\text{final}}^T \mathbf{v}_{\text{final}} + b_{\text{final}}
-$$
-
     
 *   **Score Prediction:** This combined vector is passed through a final, single-neuron linear layer to produce an unbounded scalar score (logit):
 
