@@ -154,7 +154,7 @@ The loss $\mathcal{L}$ for a batch of $N$ examples is calculated as:
 
 
 $$
-\mathcal{L}_{\text{MSE}} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+\mathcal{L}_{BCE} = \frac{1}{N} \sum_{i=1}^{N}\left(\max(\hat{y}_i, 0)- y_i \hat{y}_i+ \log\left(1 + e^{-|\hat{y}_i|}\right)\right)
 $$
 
 
