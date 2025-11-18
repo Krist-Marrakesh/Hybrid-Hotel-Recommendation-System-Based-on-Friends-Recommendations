@@ -161,7 +161,6 @@ $$
 Where:
 *   $y_i$ is the ground-truth binary label (`1` for `was_booked`, `0` otherwise).
 *   $\hat{y}_i$ is the raw scalar logit output by the model.
-*   $\sigma(\cdot)$ is the sigmoid function, which converts the logit into a probability.
 
 The `BCEWithLogitsLoss` function is highly optimized, as it combines the sigmoid operation and the BCE calculation in a single, numerically stable step. Minimizing this loss function directly encourages the model to output high scores for positive examples and low scores for negative examples, which is an excellent proxy for optimizing ranking quality.
 
