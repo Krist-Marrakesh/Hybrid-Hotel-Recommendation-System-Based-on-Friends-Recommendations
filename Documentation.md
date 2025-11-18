@@ -199,7 +199,7 @@ To quantify the contribution of each architectural component, we conducted a ser
 
 | Model Variant | Description | Best Val LogLoss ↓ | Best Val AUC ↑ |
 | :--- | :--- | :---: | :---: |
-| 1. **DCN-R (Full Model)** | The complete hybrid architecture. | 0.1886 | 0.9526 |
+| 1. **DCN-R (Full Model)** | The complete hybrid architecture. | 0.1686 | 0.9526 |
 | 2. **Cross Network Only** | The Deep Network component was removed. | 0.1886 | **0.9310** |
 | 3. Deep Network Only | The Cross Network component was removed. | 0.1901 | 0.9204 |
 | 4. DCN with standard MLP | The ResBlocks were replaced with a standard MLP. | 0.1901 | **0.9292** |
