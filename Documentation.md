@@ -267,7 +267,7 @@ This design makes the ML model a true "black box", simplifying integration for t
    
    Upon startup, the API service queries the registry for the active model version, retrieves the artifact paths, downloads them from the object store, and loads them into memory. This ensures that the service always runs with the correct, centrally-managed model version.
 
-#### 7.1. Conclusion
+#### 7. Conclusion
 
 In this work, we presented the **DCN-R**, a hybrid neural architecture that effectively addresses the trade-off between memorization and generalization. Through a rigorous process of hyperparameter optimization and extensive ablation studies, we demonstrated the model's ability to achieve a strong validation performance (**AUC: 0.9426**, **LogLoss: 0.1886**).
 
