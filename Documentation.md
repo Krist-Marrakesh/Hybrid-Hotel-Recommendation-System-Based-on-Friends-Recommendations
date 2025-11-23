@@ -197,7 +197,7 @@ To quantify the contribution of each architectural component, we conducted a ser
 | Model Variant | Description | Best Val LogLoss ↓ | Best Val AUC ↑ |
 | :--- | :--- | :---: | :---: |
 | 1. **DCN-R (Full Model)** | The complete hybrid architecture. | 0.1686 | 0.9526 |
-| 2. **Cross Network Only** | The Deep Network component was removed. | 0.1886 | **0.9310** |
+| 2. **Cross Network Only** | The Deep Network component was removed. | 0.1896 | **0.9310** |
 | 3. Deep Network Only | The Cross Network component was removed. | 0.1901 | 0.9204 |
 | 4. DCN with standard MLP | The ResBlocks were replaced with a standard MLP. | 0.1901 | **0.9292** |
 
@@ -269,7 +269,7 @@ This design makes the ML model a true "black box", simplifying integration for t
 
 #### 7. Conclusion
 
-In this work, we presented the **DCN-R**, a hybrid neural architecture that effectively addresses the trade-off between memorization and generalization. Through a rigorous process of hyperparameter optimization and extensive ablation studies, we demonstrated the model's ability to achieve a strong validation performance (**AUC: 0.9426**, **LogLoss: 0.1886**).
+In this work, we presented the **DCN-R**, a hybrid neural architecture that effectively addresses the trade-off between memorization and generalization. Through a rigorous process of hyperparameter optimization and extensive ablation studies, we demonstrated the model's ability to achieve a strong validation performance (**AUC: 0.9526**, **LogLoss: 0.1686**).
 
 Our key finding is that for high-signal, low-noise recommendation tasks, a well-tuned **Cross Network serves as the primary engine of predictive power**. Furthermore, we empirically proved that the architectural choice of the deep component is critical, with a **Residual Network** providing a stable and robust generalization module, whereas a standard MLP can be detrimental to performance. By synthesizing these two specialized components, the DCN-R provides a powerful and adaptable foundation for building high-performance, real-world recommender systems.
 
